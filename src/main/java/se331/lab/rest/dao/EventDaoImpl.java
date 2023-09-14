@@ -1,16 +1,18 @@
 package se331.lab.rest.dao;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 import se331.lab.rest.entity.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("manual")
 public class EventDaoImpl implements EventDao{
     List<Event> eventList;
 
@@ -97,15 +99,22 @@ public class EventDaoImpl implements EventDao{
     }
 
     @Override
-    public List<Event> getEventList(Integer perPage, Integer page) {
+    public Page<Event> getEvents(Integer perPage, Integer page) {
         perPage = perPage == null ? eventList.size() : perPage;
         page = page == null? 1 : page;
         int firstIndex = (page -1) * perPage;
-        return eventList.subList(firstIndex,firstIndex+perPage);
+        return new PageImpl<Event>(eventList.subList(firstIndex,firstIndex+perPage), PageRequest.of(page,perPage), eventList.size());
     }
 
     @Override
     public Event getEvent( Long id){
         return eventList.stream().filter( event -> event.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public Event save(Event event){
+        event.setId(eventList.get(eventList.size() - 1).getId() + 1);
+        eventList.add(event);
+        return event;
     }
 }
