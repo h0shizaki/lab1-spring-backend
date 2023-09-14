@@ -5,12 +5,15 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import se331.lab.rest.entity.Event;
+import se331.lab.rest.entity.Organizer;
 import se331.lab.rest.repository.EventRepository;
+import se331.lab.rest.repository.OrganizerRepository;
 
 @Component
 @RequiredArgsConstructor
 public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
     final EventRepository eventRepository;
+    final OrganizerRepository organizerRepository;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
@@ -91,5 +94,49 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                         .organizer("Brody Kill")
                         .build()
         );
+
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(111L)
+                        .organizationName("Kat Laydee")
+                        .address("Meow Town")
+                        .build()
+        );
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(222L)
+                        .organizationName("Fern Pollin")
+                        .address("Flora City")
+                        .build()
+        );
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(333L)
+                        .organizationName("Carey Wales")
+                        .address("Playa Del Carmen")
+                        .build()
+        );
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(444L)
+                        .organizationName("Dawg Dahd")
+                        .address("Woof Town")
+                        .build()
+        );
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(555L)
+                        .organizationName("Kahn Opiner")
+                        .address("Tin City")
+                        .build()
+        );
+        organizerRepository.save(
+                Organizer.builder()
+                        .id(666L)
+                        .organizationName("Brody Kill")
+                        .address("Highway Town")
+                        .build()
+        );
     }
+
 }

@@ -1,6 +1,11 @@
 package se331.lab.rest.dao;
 
 import jakarta.annotation.PostConstruct;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import se331.lab.rest.entity.Organizer;
 
@@ -8,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class OrganizerImpl implements OrganizerDao{
+@Profile("manual")
+public class OrganizerDaoImpl implements OrganizerDao{
     List<Organizer> organizerList;
 
     @PostConstruct
@@ -56,15 +62,23 @@ public class OrganizerImpl implements OrganizerDao{
     public Integer getOrganizerSize() {return this.organizerList.size();}
 
     @Override
-    public List<Organizer> getOrganizerList(Integer perPage, Integer page) {
+    public Page<Organizer> getOrganizers(Integer perPage, Integer page) {
         perPage = perPage == null ? organizerList.size() : perPage;
         page = page == null? 1 : page;
         int firstIndex = (page -1) * perPage;
-        return organizerList.subList(firstIndex, firstIndex+perPage);
+        return new PageImpl<Organizer>(organizerList.subList(firstIndex,firstIndex+perPage), PageRequest.of(page,perPage), organizerList.size());
     }
 
     @Override
     public Organizer getOrganizer(Long id) {
         return organizerList.stream().filter( org -> org.getId().equals(id)).findFirst().orElse(null);
     }
+
+    @Override
+    public Organizer save(Organizer organizer) {
+        organizer.setId(organizerList.get(organizerList.size() - 1).getId() + 1);
+        organizerList.add(organizer);
+        return organizer;
+    }
+
 }
