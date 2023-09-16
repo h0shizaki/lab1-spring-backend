@@ -42,7 +42,11 @@ public class EventController {
 
     @PostMapping("events")
     public ResponseEntity<?> addEvent(@RequestBody Event event) {
-        Event output = eventService.save(event);
-        return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
+        try{
+            Event output = eventService.save(event);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
+        }catch (NullPointerException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The given organizer is not found");
+        }
     }
 }

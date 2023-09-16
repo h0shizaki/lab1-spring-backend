@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import se331.lab.rest.entity.Organizer;
 import se331.lab.rest.service.OrganizerService;
+import se331.lab.rest.util.LabMapper;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,18 +22,18 @@ public class OrganizerController {
 
     @GetMapping("organizers")
     public ResponseEntity<?> getOrganizerList(@RequestParam(value = "_limit", required = false) Integer perPage, @RequestParam(value = "_page", required = false) Integer page){
-        Page<Organizer> pageOutput = null;
-        pageOutput = organizerService.getOrganizers(perPage, page);
         HttpHeaders responseHeader = new HttpHeaders();
-        responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
-        return new ResponseEntity<>(pageOutput.getContent(), responseHeader, HttpStatus.OK);
+        List<Organizer> output = organizerService.getAllOrganizer();
+        responseHeader.set("x-total-count", String.valueOf(output.size()));
+        return new ResponseEntity<>(LabMapper.INSTANCE.getOrganizerDTO(output), responseHeader, HttpStatus.OK);
     }
+
 
     @GetMapping("organizers/{id}")
     public ResponseEntity<?> getOrganizer(@PathVariable("id") Long id){
-        Organizer organizer = organizerService.getOrganizer(id);
+        Organizer organizer = organizerService.getOrganizer(id).orElse(null);
         if(organizer != null){
-            return ResponseEntity.ok(organizer);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getOrganizerDTO(organizer));
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
         }
@@ -39,6 +42,6 @@ public class OrganizerController {
     @PostMapping("organizers")
     public ResponseEntity<?> addOrganizer(@RequestBody Organizer organizer){
         Organizer output = organizerService.save(organizer);
-        return ResponseEntity.ok(output);
+        return ResponseEntity.ok(LabMapper.INSTANCE.getOrganizerDTO(output));
     }
 }
