@@ -1,18 +1,15 @@
 package se331.lab.rest.dto;
 
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventDto {
+public class ParticipantEventHistory {
     Long id;
     String category;
     String title;
@@ -22,6 +19,4 @@ public class EventDto {
     String time;
     Boolean petAllowed;
     EventOrganizerDto organizer;
-    List<EventParticipant> participants;
-
 }

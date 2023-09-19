@@ -6,19 +6,60 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import se331.lab.rest.entity.Event;
 import se331.lab.rest.entity.Organizer;
+import se331.lab.rest.entity.Participant;
 import se331.lab.rest.repository.EventRepository;
 import se331.lab.rest.repository.OrganizerRepository;
-import se331.lab.rest.service.EventService;
+import se331.lab.rest.repository.ParticipantRepository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 @Component
 @RequiredArgsConstructor
 public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
     final EventRepository eventRepository;
     final OrganizerRepository organizerRepository;
+    final ParticipantRepository participantRepository;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         Organizer org1, org2, org3;
+        Participant participantA, participantB, participantC, participantD, participantE;
+        participantA = participantRepository.save(
+                Participant.builder()
+                        .id(1L)
+                        .name("Kan Katpark")
+                        .telNo("1112")
+                        .build()
+        );
+        participantB = participantRepository.save(
+                Participant.builder()
+                        .id(2L)
+                        .name("Yuri Gagarin")
+                        .telNo("1150")
+                        .build()
+        );
+        participantC = participantRepository.save(
+                Participant.builder()
+                        .id(3L)
+                        .name("John Smith")
+                        .build()
+        );
+        participantD = participantRepository.save(
+                Participant.builder()
+                        .id(4L)
+                        .name("Musashi Miyamoto")
+                        .build()
+        );
+        participantE = participantRepository.save(
+                Participant.builder()
+                        .id(5L)
+                        .name("Sun Tzu")
+                        .build()
+        );
+
         org1 = organizerRepository.save(
                 Organizer.builder()
                         .organizationName("CAMT")
@@ -51,8 +92,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org1)
                 .build()
         ;
+        addParticipantToEvent(participantA, participantB, participantC, tempEvent);
         org1.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
         tempEvent = Event.builder()
                 .id(456L)
                 .category("food")
@@ -65,8 +108,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org1)
                 .build()
         ;
+        addParticipantToEvent(participantA, participantB, participantC, tempEvent);
         org1.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
         tempEvent = Event.builder()
                 .id(789L)
                 .category("sustainability")
@@ -79,8 +124,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org1)
                 .build()
         ;
+        addParticipantToEvent(participantA, participantB, participantC, tempEvent);
         org1.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
         tempEvent = Event.builder()
                 .id(1001L)
                 .category("animal welfare")
@@ -93,8 +140,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org2)
                 .build()
         ;
+        addParticipantToEvent(participantD, participantE, participantC, tempEvent);
         org2.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
         tempEvent = Event.builder()
                 .id(1002L)
                 .category("food")
@@ -107,8 +156,10 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org2)
                 .build()
         ;
+        addParticipantToEvent(participantC,participantD,participantE,tempEvent);
         org2.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
         tempEvent = Event.builder()
                 .id(1003L)
                 .category("sustainability")
@@ -121,8 +172,19 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org3)
                 .build()
         ;
+        addParticipantToEvent(participantC,participantD,participantE,tempEvent);
         org3.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
+
+    }
+
+    private void addParticipantToEvent(Participant participantA, Participant participantB, Participant participantC, Event tempEvent) {
+        tempEvent.getParticipants().add(participantA);
+        tempEvent.getParticipants().add(participantB);
+        tempEvent.getParticipants().add(participantC);
+        participantA.getEventHistory().add(tempEvent);
+        participantB.getEventHistory().add(tempEvent);
+        participantC.getEventHistory().add(tempEvent);
     }
 
 }

@@ -3,6 +3,7 @@ package se331.lab.rest.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,6 +18,8 @@ public class Participant {
     Long id;
     String name;
     String telNo;
-    @ManyToMany
-    List<Event> eventHistory;
+    @ManyToMany()
+    @JoinTable(name = "event_participants", joinColumns = @JoinColumn(name = "participants_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @Builder.Default
+    List<Event> eventHistory = new ArrayList<>();
 }
