@@ -2,6 +2,7 @@ package se331.lab.rest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,33 +20,47 @@ public class EventController {
 
 
     @GetMapping("events")
-    public ResponseEntity<?> getEventList(@RequestParam(value = "_limit", required = false) Integer perPage, @RequestParam(value = "_page", required = false) Integer page) {
-        Page<Event> pageOutput = null;
-        pageOutput = eventService.getEvents(perPage, page);
+    public ResponseEntity<?> getEventList(@RequestParam(value = "limit", required = false) Integer perPage, @RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "title", required = false) String title, @RequestParam(value = "organizer", required = false) String organizer) {
+        perPage = perPage == null ? 3 : perPage;
+        page = page == null ? 1 : page;
+        Page<Event> pageOutput;
+//        if(title != null) {
+//            pageOutput = eventService.getEvents(title, PageRequest.of(page - 1, perPage));
+//        } else if (organizer != null) {
+//            pageOutput = eventService.getEventsByOrganizer(organizer, PageRequest.of(page - 1, perPage));
+//        } else{
+//            pageOutput = eventService.getEvents(perPage, page);
+//        }
+        if (title != null) {
+            pageOutput = eventService.getEvents(title, PageRequest.of(page - 1, perPage));
+        } else {
+            pageOutput = eventService.getEvents(perPage, page);
+
+        }
         HttpHeaders responseHeader = new HttpHeaders();
         responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
-//        return new ResponseEntity<>(pageOutput.getContent(), responseHeader, HttpStatus.OK);
         return new
                 ResponseEntity<>(LabMapper.INSTANCE.getEventDTO(pageOutput.getContent()), responseHeader, HttpStatus.OK);
     }
 
 
     @GetMapping("events/{id}")
-    public ResponseEntity<?> getEvent(@PathVariable("id") Long id){
+    public ResponseEntity<?> getEvent(@PathVariable("id") Long id) {
         Event output = eventService.getEvent(id);
-        if(output != null){
+        if (output != null) {
             return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
-        }else{
+        } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
         }
     }
 
     @PostMapping("events")
     public ResponseEntity<?> addEvent(@RequestBody Event event) {
-        try{
+        try {
             Event output = eventService.save(event);
             return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The given organizer is not found");
         }
     }
