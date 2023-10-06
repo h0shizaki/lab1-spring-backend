@@ -29,4 +29,7 @@ public class Event {
     @ManyToMany()
     @Builder.Default
     List<Participant> participants = new ArrayList<>();
+
+    @ElementCollection
+    List<String> images;
 }

@@ -23,5 +23,6 @@ public class EventDto {
     Boolean petAllowed;
     EventOrganizerDto organizer;
     List<EventParticipant> participants;
+    List<String> images;
 
 }

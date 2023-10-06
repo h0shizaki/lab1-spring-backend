@@ -3,6 +3,8 @@ package se331.lab.rest.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import se331.lab.rest.entity.Event;
 import se331.lab.rest.entity.Organizer;
@@ -10,11 +12,11 @@ import se331.lab.rest.entity.Participant;
 import se331.lab.rest.repository.EventRepository;
 import se331.lab.rest.repository.OrganizerRepository;
 import se331.lab.rest.repository.ParticipantRepository;
+import se331.lab.rest.security.user.Role;
+import se331.lab.rest.security.user.User;
+import se331.lab.rest.security.user.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
     final EventRepository eventRepository;
     final OrganizerRepository organizerRepository;
     final ParticipantRepository participantRepository;
+    final UserRepository userRepository;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
@@ -176,8 +179,30 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         org3.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
 
+        addUsers();
     }
-
+    User user1, user2, user3;
+    private void addUsers() {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        user1 = User.builder()
+                .username("admin")
+                .password(encoder.encode("admin"))
+                .firstname("admin")
+                .lastname("admin")
+                .email("admin@admin.com")
+                .roles(List.of(new Role[] {Role.ROLE_ADMIN}))
+                .build();
+        user2 = User.builder()
+                .username("user")
+                .password(encoder.encode("user"))
+                .firstname("user")
+                .lastname("user")
+                .email("user@user.com")
+                .roles(List.of(new Role[] {Role.ROLE_FASTFIT}))
+                .build();
+        userRepository.save(user2);
+        userRepository.save(user1);
+    }
     private void addParticipantToEvent(Participant participantA, Participant participantB, Participant participantC, Event tempEvent) {
         tempEvent.getParticipants().add(participantA);
         tempEvent.getParticipants().add(participantB);
