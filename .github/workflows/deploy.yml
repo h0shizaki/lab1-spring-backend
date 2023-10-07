@@ -22,6 +22,8 @@ jobs:
         name: run Maven
         run: |
           mvn clean install -DskipTests -B
+          mkdir target/extracted
+          java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
           mkdir -p target/dependency && (cd target/dependency; unzip ../*.jar)
       - 
         name: Set up QEMU
