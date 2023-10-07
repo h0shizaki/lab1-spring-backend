@@ -32,8 +32,9 @@ public class SecurityConfiguration {
         http.csrf((crsf) -> crsf.disable())
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers("/api/v1/auth/**").permitAll()
-//                            .requestMatchers(HttpMethod.GET, "/events").permitAll()
-//                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/events/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/organizers/**").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/events").hasRole("ADMIN")
                             .anyRequest().authenticated();
                 })

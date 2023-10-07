@@ -25,10 +25,11 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
     final OrganizerRepository organizerRepository;
     final ParticipantRepository participantRepository;
     final UserRepository userRepository;
+    Organizer org1, org2, org3;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        Organizer org1, org2, org3;
+
         Participant participantA, participantB, participantC, participantD, participantE;
         participantA = participantRepository.save(
                 Participant.builder()
@@ -63,22 +64,28 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                         .build()
         );
 
+
+        addUsers();
+
         org1 = organizerRepository.save(
                 Organizer.builder()
                         .organizationName("CAMT")
                         .address("CAMT CMU")
+                        .user(user1)
                         .build()
         );
         org2 = organizerRepository.save(
                 Organizer.builder()
                         .organizationName("The standard oil")
                         .address("NYC USA")
+                        .user(user2)
                         .build()
         );
         org3 = organizerRepository.save(
                 Organizer.builder()
                         .organizationName("Zaibatsu Group")
                         .address("TKY JP")
+                        .user(user3)
                         .build()
         );
 
@@ -159,7 +166,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org2)
                 .build()
         ;
-        addParticipantToEvent(participantC,participantD,participantE,tempEvent);
+        addParticipantToEvent(participantC, participantD, participantE, tempEvent);
         org2.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
 
@@ -175,13 +182,15 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .organizer(org3)
                 .build()
         ;
-        addParticipantToEvent(participantC,participantD,participantE,tempEvent);
+        addParticipantToEvent(participantC, participantD, participantE, tempEvent);
         org3.getOwnEvents().add(tempEvent);
         eventRepository.save(tempEvent);
 
-        addUsers();
+
     }
+
     User user1, user2, user3;
+
     private void addUsers() {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         user1 = User.builder()
@@ -190,7 +199,8 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .firstname("admin")
                 .lastname("admin")
                 .email("admin@admin.com")
-                .roles(List.of(new Role[] {Role.ROLE_ADMIN}))
+                .roles(List.of(new Role[]{Role.ROLE_ADMIN}))
+                .organizer(org1)
                 .build();
         user2 = User.builder()
                 .username("user")
@@ -198,11 +208,24 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
                 .firstname("user")
                 .lastname("user")
                 .email("user@user.com")
-                .roles(List.of(new Role[] {Role.ROLE_FASTFIT}))
+                .roles(List.of(new Role[]{Role.ROLE_FASTFIT}))
+                .organizer(org2)
                 .build();
+        user3 = User.builder()
+                .username("kan")
+                .password(encoder.encode("kan"))
+                .firstname("kan")
+                .lastname("katpark")
+                .email("kan_k@cmu.ac.th")
+                .roles(List.of(new Role[]{Role.ROLE_DISTRIBUTOR}))
+                .organizer(org3)
+                .build();
+
         userRepository.save(user2);
         userRepository.save(user1);
+        userRepository.save(user3);
     }
+
     private void addParticipantToEvent(Participant participantA, Participant participantB, Participant participantC, Event tempEvent) {
         tempEvent.getParticipants().add(participantA);
         tempEvent.getParticipants().add(participantB);
