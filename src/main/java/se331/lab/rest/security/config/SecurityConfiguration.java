@@ -34,9 +34,9 @@ public class SecurityConfiguration {
                     authorize.requestMatchers("/api/v1/auth/**").permitAll()
                             .requestMatchers( "/events/**").permitAll()
                             .requestMatchers( "/organizers/**").permitAll()
-                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/uploadImage").permitAll()
                             .requestMatchers(HttpMethod.POST, "/uploadFile").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated();
                 })
 
