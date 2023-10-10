@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                             .requestMatchers( "/events/**").permitAll()
                             .requestMatchers( "/organizers/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/uploadImage").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/uploadFile").permitAll()
+//                            .requestMatchers(HttpMethod.POST, "/uploadFile").permitAll()
                             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated();
                 })
